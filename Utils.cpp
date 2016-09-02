@@ -259,38 +259,38 @@ bool printable(const std::string& bytes) {
 
 float frequency_score(const std::string& bytes) {
     float scores[256] = {0};
-    scores['a'] = scores['A'] = 8.167f;
-    scores['b'] = scores['B'] = 1.492f;
-    scores['c'] = scores['C'] = 2.782f;
-    scores['d'] = scores['D'] = 4.253f;
-    scores['e'] = scores['E'] = 12.702f;
-    scores['f'] = scores['F'] = 2.228f;
-    scores['g'] = scores['G'] = 2.015f;
-    scores['h'] = scores['H'] = 6.094f;
-    scores['i'] = scores['I'] = 6.966f;
-    scores['j'] = scores['J'] = 0.153f;
-    scores['k'] = scores['K'] = 0.772f;
-    scores['l'] = scores['L'] = 4.025f;
-    scores['m'] = scores['M'] = 2.406f;
-    scores['n'] = scores['N'] = 6.749f;
-    scores['o'] = scores['O'] = 7.507f;
-    scores['p'] = scores['P'] = 1.929f;
-    scores['q'] = scores['Q'] = 0.095f;
-    scores['r'] = scores['R'] = 5.987f;
-    scores['s'] = scores['S'] = 6.327f;
-    scores['t'] = scores['T'] = 9.056f;
-    scores['u'] = scores['U'] = 2.758f;
-    scores['v'] = scores['V'] = 0.978f;
-    scores['w'] = scores['W'] = 2.361f;
-    scores['x'] = scores['X'] = 0.150f;
-    scores['y'] = scores['Y'] = 1.974f;
-    scores['z'] = scores['Z'] = 0.074f;
-    scores['z'] = scores['Z'] = 0.074f;
+    float UPPERCASE_SCALE = 0.5f;
+    scores['a'] = 8.167f; scores['A'] = scores['a'] * UPPERCASE_SCALE;
+    scores['b'] = 1.492f; scores['B'] = scores['b'] * UPPERCASE_SCALE;
+    scores['c'] = 2.782f; scores['C'] = scores['c'] * UPPERCASE_SCALE;
+    scores['d'] = 4.253f; scores['D'] = scores['d'] * UPPERCASE_SCALE;
+    scores['e'] = 12.702f; scores['E'] = scores['e'] * UPPERCASE_SCALE;
+    scores['f'] = 2.228f; scores['F'] = scores['f'] * UPPERCASE_SCALE;
+    scores['g'] = 2.015f; scores['G'] = scores['g'] * UPPERCASE_SCALE;
+    scores['h'] = 6.094f; scores['H'] = scores['h'] * UPPERCASE_SCALE;
+    scores['i'] = 6.966f; scores['I'] = scores['i'] * UPPERCASE_SCALE;
+    scores['j'] = 0.153f; scores['J'] = scores['j'] * UPPERCASE_SCALE;
+    scores['k'] = 0.772f; scores['K'] = scores['k'] * UPPERCASE_SCALE;
+    scores['l'] = 4.025f; scores['L'] = scores['l'] * UPPERCASE_SCALE;
+    scores['m'] = 2.406f; scores['M'] = scores['m'] * UPPERCASE_SCALE;
+    scores['n'] = 6.749f; scores['N'] = scores['n'] * UPPERCASE_SCALE;
+    scores['o'] = 7.507f; scores['O'] = scores['o'] * UPPERCASE_SCALE;
+    scores['p'] = 1.929f; scores['P'] = scores['p'] * UPPERCASE_SCALE;
+    scores['q'] = 0.095f; scores['Q'] = scores['q'] * UPPERCASE_SCALE;
+    scores['r'] = 5.987f; scores['R'] = scores['r'] * UPPERCASE_SCALE;
+    scores['s'] = 6.327f; scores['S'] = scores['s'] * UPPERCASE_SCALE;
+    scores['t'] = 9.056f; scores['T'] = scores['t'] * UPPERCASE_SCALE;
+    scores['u'] = 2.758f; scores['U'] = scores['u'] * UPPERCASE_SCALE;
+    scores['v'] = 0.978f; scores['V'] = scores['v'] * UPPERCASE_SCALE;
+    scores['w'] = 2.361f; scores['W'] = scores['w'] * UPPERCASE_SCALE;
+    scores['x'] = 0.150f; scores['X'] = scores['x'] * UPPERCASE_SCALE;
+    scores['y'] = 1.974f; scores['Y'] = scores['y'] * UPPERCASE_SCALE;
+    scores['z'] = 0.074f; scores['Z'] = scores['z'] * UPPERCASE_SCALE;
 
     float result = 0.0f;
     for(unsigned char b : bytes) {
-        if (!printable(b))
-            return 0;
+        //if (!printable(b))
+            //return 0;
 
         result += scores[b];
     }
