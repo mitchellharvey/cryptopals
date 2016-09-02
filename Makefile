@@ -6,7 +6,7 @@
 #
 
 CXX = g++
-CXXFLAGS = -Wall -std=c++11 -g -I./
+CXXFLAGS = -Wall -std=c++11 -O3 -I./
 LDFLAGS = 
 LIBS = 
 

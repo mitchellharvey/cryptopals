@@ -4,11 +4,8 @@
 
 int main(int argc, char** argv) {
     if (argc > 1) {
-        std::cout << base64::encode(argv[1]) << std::endl;
-        std::string hexEncoded = hex::encode(argv[1]);
-        std::cout << hexEncoded << std::endl;
-        std::cout << hex::decode(hexEncoded) << std::endl;
-       
+        std::string bytes = hex::decode(argv[1]);
+        std::cout << "Output: " << base64::encode(bytes) << std::endl;
     }
 
     return 0;
