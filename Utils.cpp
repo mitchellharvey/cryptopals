@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <iostream>
 
 namespace {
     const char _base64Table[] = {
@@ -16,14 +17,14 @@ namespace {
 }
 
 namespace base64 {
-std::string encode(const std::string& input) {
+std::string encode(const std::string& bytes) {
     // Basically, treat the array of bytes as a contiguous sequence of bits
     // and encode every 6 bits starting at the begining of the string into
     // a unit (byte sized value).  The unit  maps to a particular ASCII character 
     // for encoding from the _base64Table.
 
-    const char* cur = input.c_str();
-    const char* end = cur + input.size();
+    const char* cur = bytes.c_str();
+    const char* end = cur + bytes.size();
 
     const int UNIT_MASK = 0x3F;
     const int BYTES_PER_WORD = 3;
@@ -36,13 +37,13 @@ std::string encode(const std::string& input) {
     // Then split the 18 bits into 4 6bit unit.  Map each 6bit unit to
     // a unique ASCII character from the mapping.  Left over bytes 
     // will be handled after the loop.
-    char bytes[BYTES_PER_WORD] = { 0 };
+    char b[BYTES_PER_WORD] = { 0 };
     while ((cur + BYTES_PER_WORD) <= end) {
-        bytes[0] = *cur;
-        bytes[1] = *(cur + 1);
-        bytes[2] = *(cur + 2);
+        b[0] = *cur;
+        b[1] = *(cur + 1);
+        b[2] = *(cur + 2);
 
-        unsigned int word = (bytes[0] << 16) | (bytes[1] << 8) | (bytes[2]);
+        unsigned int word = (b[0] << 16) | (b[1] << 8) | (b[2]);
 
         unsigned char u0 = (word >> 18) & UNIT_MASK;
         unsigned char u1 = (word >> 12) & UNIT_MASK;
@@ -90,7 +91,7 @@ std::string encode(const std::string& input) {
     return output;
 }
 
-std::string decode(const std::string& input) {
+std::string decode(const std::string& bytes) {
     // Create a reverse lookup table from base64 ASCII values to
     // the correct integer values
     char lookup[256] = { 0 };
@@ -98,8 +99,8 @@ std::string decode(const std::string& input) {
         lookup[ static_cast<size_t>(_base64Table[i]) ] = i;
     }
 
-    const char* cur = input.c_str();
-    const char* end = cur + input.size();
+    const char* cur = bytes.c_str();
+    const char* end = cur + bytes.size();
 
     const int BYTES_PER_PASS = 4;
 
@@ -137,12 +138,12 @@ std::string decode(const std::string& input) {
 } // namespace base64
 
 namespace hex {
-std::string encode(const std::string& input) {
+std::string encode(const std::string& bytes) {
     const char* lookup = "0123456789abcdef";
 
     std::string result;
-    for(size_t i = 0; i < input.size(); ++i) {
-        char byte = input[i]; 
+    for(size_t i = 0; i < bytes.size(); ++i) {
+        char byte = bytes[i]; 
         result += lookup[ static_cast<size_t>(((byte & 0xF0) >> 4)) ];
         result += lookup[ static_cast<size_t>(byte & 0xF) ];
     }
@@ -150,7 +151,7 @@ std::string encode(const std::string& input) {
     return result;
 }
 
-std::string decode(const std::string& input) {
+std::string decode(const std::string& bytes) {
     const char* lookup = "0123456789abcdef";
     char hex2dec[256] = {0};
     for(size_t i = 0; i < 16; ++i) {
@@ -159,9 +160,9 @@ std::string decode(const std::string& input) {
 
     std::string result;
     char byte = 0;
-    for(size_t i = 0; (i + 2) <= input.size(); i+=2) {
-        byte = hex2dec[ static_cast<size_t>(input[i]) ] << 4;
-        byte = byte | hex2dec[ static_cast<size_t>(input[i+1]) ];
+    for(size_t i = 0; (i + 2) <= bytes.size(); i+=2) {
+        byte = hex2dec[ static_cast<size_t>(bytes[i]) ] << 4;
+        byte = byte | hex2dec[ static_cast<size_t>(bytes[i+1]) ];
         result += byte;
     }
 
@@ -170,15 +171,131 @@ std::string decode(const std::string& input) {
 } // namespace hex
 
 namespace cipher {
-    std::string fixed_xor(const std::string& buf1, const std::string& buf2) {
-        std::string result;
-        if (buf1.size() == buf2.size()) {
-            result.reserve(buf1.size());
-            for(size_t i = 0; i < buf1.size(); ++i) {
-                result += buf1[i] ^ buf2[i];
-            }
+std::string fixed_xor(const std::string& bytes1, const std::string& bytes2) {
+    std::string result;
+    if (bytes1.size() == bytes2.size()) {
+        result.reserve(bytes1.size());
+        for(size_t i = 0; i < bytes1.size(); ++i) {
+            result += bytes1[i] ^ bytes2[i];
         }
-        return result;
     }
+    return result;
+}
+
+std::string byte_xor(const std::string& bytes, unsigned char byte) {
+    std::string result(bytes.size(), 0);
+    for(size_t i = 0; i < bytes.size(); ++i) {
+        result[i] = bytes[i] ^ byte;
+    }
+    return result;
+}
 } // namespace cipher
 
+namespace ascii {
+bool alpha_numeric(unsigned char byte) {
+    if (byte >= '0' && byte <= '9')
+        return true;
+
+    if (byte >= 'A' && byte <= 'Z')
+        return true;
+
+    if (byte >= 'a' && byte <= 'z')
+        return true;
+
+    return false;
+}
+
+bool alpha_numeric(const std::string& bytes) {
+    for(char c : bytes) {
+        if (alpha_numeric(c))
+            continue;
+
+        return false;
+    }
+    return true;
+}
+
+bool punctuation(unsigned char byte) {
+    if (byte >= ' ' && byte <= '/')
+        return true;
+
+    if (byte >= ':' && byte <= '@')
+        return true;
+
+    if (byte >= '[' && byte <= '^')
+        return true;
+
+    if (byte >= '{' && byte <= '~')
+        return true;
+
+    return false;
+}
+
+bool punctuation(const std::string& bytes) {
+    for(char c : bytes) {
+        if (punctuation(c))
+            continue;
+
+        return false;
+    }
+    return true;
+}
+
+bool printable(unsigned char byte) {
+    if (alpha_numeric(byte) || punctuation(byte))
+        return true;
+
+    return false;
+}
+
+bool printable(const std::string& bytes) {
+    for(char c : bytes) {
+        if (printable(c))
+            continue;
+
+        return false;
+    }
+    return true;
+}
+
+float frequency_score(const std::string& bytes) {
+    float scores[256] = {0};
+    scores['a'] = scores['A'] = 8.167f;
+    scores['b'] = scores['B'] = 1.492f;
+    scores['c'] = scores['C'] = 2.782f;
+    scores['d'] = scores['D'] = 4.253f;
+    scores['e'] = scores['E'] = 12.702f;
+    scores['f'] = scores['F'] = 2.228f;
+    scores['g'] = scores['G'] = 2.015f;
+    scores['h'] = scores['H'] = 6.094f;
+    scores['i'] = scores['I'] = 6.966f;
+    scores['j'] = scores['J'] = 0.153f;
+    scores['k'] = scores['K'] = 0.772f;
+    scores['l'] = scores['L'] = 4.025f;
+    scores['m'] = scores['M'] = 2.406f;
+    scores['n'] = scores['N'] = 6.749f;
+    scores['o'] = scores['O'] = 7.507f;
+    scores['p'] = scores['P'] = 1.929f;
+    scores['q'] = scores['Q'] = 0.095f;
+    scores['r'] = scores['R'] = 5.987f;
+    scores['s'] = scores['S'] = 6.327f;
+    scores['t'] = scores['T'] = 9.056f;
+    scores['u'] = scores['U'] = 2.758f;
+    scores['v'] = scores['V'] = 0.978f;
+    scores['w'] = scores['W'] = 2.361f;
+    scores['x'] = scores['X'] = 0.150f;
+    scores['y'] = scores['Y'] = 1.974f;
+    scores['z'] = scores['Z'] = 0.074f;
+    scores['z'] = scores['Z'] = 0.074f;
+
+    float result = 0.0f;
+    for(unsigned char b : bytes) {
+        if (!printable(b))
+            return 0;
+
+        result += scores[b];
+    }
+
+    return result;
+}
+} //namespace ascii
