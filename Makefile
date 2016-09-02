@@ -13,10 +13,10 @@ LIBS =
 # define the C source files
 COMMON_SRCS 	= 	./Utils.cpp 
 
-HEX2BASE64_SRCS = 	./hex2base64.cpp
+CHALLENGE1_SRCS = 	./challenge1.cpp
 
 # Binaries
-HEX2BASE64 = 'hex2base64.out'
+CHALLENGE1 = 'challenge1.out'
 
 #
 # The following part of the makefile is generic; it can be used to 
@@ -25,15 +25,15 @@ HEX2BASE64 = 'hex2base64.out'
 #
 
 COMMON_OBJS = $(COMMON_SRCS:.cpp=.o)
-HEX2BASE64_OBJS = $(HEX2BASE64_SRCS:.cpp=.o)
+CHALLENGE1_OBJS = $(CHALLENGE1_SRCS:.cpp=.o)
 
 .PHONY: depend clean
 
-all: $(HEX2BASE64)
+all: $(CHALLENGE1)
 	@echo Build All
 
-$(HEX2BASE64): $(COMMON_OBJS) $(HEX2BASE64_OBJS)
-	$(CXX) $(COMMON_OBJS) $(HEX2BASE64_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(HEX2BASE64)
+$(CHALLENGE1): $(COMMON_OBJS) $(CHALLENGE1_OBJS)
+	$(CXX) $(COMMON_OBJS) $(CHALLENGE1_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CHALLENGE1)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
@@ -43,7 +43,7 @@ $(HEX2BASE64): $(COMMON_OBJS) $(HEX2BASE64_OBJS)
 	$(CXX) $(CFLAGS) -c $<  -o $@
 
 clean:
-	@$(RM) *.o *~ $(HEX2BASE64)
+	@$(RM) *.o *~ $(CHALLANGE1)
 	@echo Clean Complete
 
 depend: $(SRCS)
