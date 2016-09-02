@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 
     std::cout << std::endl;
     std::cout << "Score: " << best << std::endl;
-    std::cout << "Byte: 0x" << hex::encode(std::string(reinterpret_cast<char*>(&encode_byte), 1)) << std::endl;
+    std::cout << "Byte: 0x" << hex::encode(encode_byte) << std::endl;
     std::cout << "Result: " << result << std::endl;
 
     return 0;

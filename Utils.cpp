@@ -16,6 +16,10 @@ namespace {
 }
 
 namespace base64 {
+std::string encode(unsigned char byte) {
+    return encode(std::string(reinterpret_cast<char*>(&byte), 1));
+}
+
 std::string encode(const std::string& bytes) {
     // Basically, treat the array of bytes as a contiguous sequence of bits
     // and encode every 6 bits starting at the begining of the string into
@@ -90,6 +94,10 @@ std::string encode(const std::string& bytes) {
     return output;
 }
 
+std::string decode(unsigned char byte) {
+    return decode(std::string(reinterpret_cast<char*>(&byte), 1));
+}
+
 std::string decode(const std::string& bytes) {
     // Create a reverse lookup table from base64 ASCII values to
     // the correct integer values
@@ -137,6 +145,10 @@ std::string decode(const std::string& bytes) {
 } // namespace base64
 
 namespace hex {
+std::string encode(unsigned char byte) {
+    return encode(std::string(reinterpret_cast<char*>(&byte), 1));
+}
+
 std::string encode(const std::string& bytes) {
     const char* lookup = "0123456789abcdef";
 
@@ -148,6 +160,10 @@ std::string encode(const std::string& bytes) {
     }
 
     return result;
+}
+
+std::string decode(unsigned char byte) {
+    return decode(std::string(reinterpret_cast<char*>(&byte), 1));
 }
 
 std::string decode(const std::string& bytes) {

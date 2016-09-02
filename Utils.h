@@ -3,12 +3,18 @@
 
 namespace base64 {
     std::string encode(const std::string& bytes);
+    std::string encode(unsigned char byte);
+
     std::string decode(const std::string& bytes);
+    std::string decode(unsigned char byte);
 }
 
 namespace hex {
     std::string encode(const std::string& bytes);
+    std::string encode(unsigned char byte);
+
     std::string decode(const std::string& bytes);
+    std::string decode(unsigned char byte);
 }
 
 namespace cipher {

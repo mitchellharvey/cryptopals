@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     std::cout << std::endl;
     std::cout << "Encoded: " << original << std::endl;
     std::cout << "Decoded: " << result << std::endl;
-    std::cout << "Encode Byte: 0x" << hex::encode(std::string(reinterpret_cast<char*>(&encode_byte), 1)) << std::endl;
+    std::cout << "Encode Byte: 0x" << hex::encode(encode_byte) << std::endl;
     std::cout << "Score: " << best << std::endl;
 
 
