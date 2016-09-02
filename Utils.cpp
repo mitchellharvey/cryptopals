@@ -101,7 +101,7 @@ std::string decode(unsigned char byte) {
 std::string decode(const std::string& bytes) {
     // Create a reverse lookup table from base64 ASCII values to
     // the correct integer values
-    char lookup[256] = { 0 };
+    char lookup[255] = { 0 };
     for (size_t i = 0; i < sizeof(_base64Table); ++i) {
         lookup[ static_cast<size_t>(_base64Table[i]) ] = i;
     }
@@ -168,7 +168,7 @@ std::string decode(unsigned char byte) {
 
 std::string decode(const std::string& bytes) {
     const char* lookup = "0123456789abcdef";
-    char hex2dec[256] = {0};
+    char hex2dec[255] = {0};
     for(size_t i = 0; i < 16; ++i) {
         hex2dec[static_cast<size_t>(lookup[i])] = i;
     }
@@ -277,7 +277,7 @@ bool printable(const std::string& bytes) {
 }
 
 float frequency_score(const std::string& bytes) {
-    float scores[256] = {0};
+    float scores[255] = {0};
     const float UPPERCASE_SCALE = 0.1f;
     scores['a'] = 8.167f; scores['A'] = scores['a'] * UPPERCASE_SCALE;
     scores['b'] = 1.492f; scores['B'] = scores['b'] * UPPERCASE_SCALE;
