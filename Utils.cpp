@@ -1,5 +1,4 @@
 #include "Utils.h"
-#include <iostream>
 
 namespace {
     const char _base64Table[] = {
