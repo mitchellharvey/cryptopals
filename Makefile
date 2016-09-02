@@ -14,9 +14,11 @@ LIBS =
 COMMON_SRCS 	= 	./Utils.cpp 
 
 CHALLENGE1_SRCS = 	./challenge1.cpp
+CHALLENGE2_SRCS = 	./challenge2.cpp
 
 # Binaries
 CHALLENGE1 = 'challenge1.out'
+CHALLENGE2 = 'challenge2.out'
 
 #
 # The following part of the makefile is generic; it can be used to 
@@ -26,24 +28,28 @@ CHALLENGE1 = 'challenge1.out'
 
 COMMON_OBJS = $(COMMON_SRCS:.cpp=.o)
 CHALLENGE1_OBJS = $(CHALLENGE1_SRCS:.cpp=.o)
+CHALLENGE2_OBJS = $(CHALLENGE2_SRCS:.cpp=.o)
 
 .PHONY: depend clean
 
-all: $(CHALLENGE1)
+all: $(CHALLENGE1) $(CHALLENGE2)
 	@echo Build All
 
 $(CHALLENGE1): $(COMMON_OBJS) $(CHALLENGE1_OBJS)
 	$(CXX) $(COMMON_OBJS) $(CHALLENGE1_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CHALLENGE1)
+
+$(CHALLENGE2): $(COMMON_OBJS) $(CHALLENGE2_OBJS)
+	$(CXX) $(COMMON_OBJS) $(CHALLENGE2_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CHALLENGE2)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
 # the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
 # (see the gnu make manual section about automatic variables)
 .cpp.o:
-	$(CXX) $(CFLAGS) -c $<  -o $@
+	$(CXX) $(CXXFLAGS) -c $<  -o $@
 
 clean:
-	@$(RM) *.o *~ $(CHALLANGE1)
+	@$(RM) *.o *~ *.out
 	@echo Clean Complete
 
 depend: $(SRCS)

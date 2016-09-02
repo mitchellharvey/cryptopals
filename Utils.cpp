@@ -95,14 +95,13 @@ std::string decode(const std::string& input) {
     // the correct integer values
     char lookup[256] = { 0 };
     for (size_t i = 0; i < sizeof(_base64Table); ++i) {
-        lookup[_base64Table[i]] = i;
+        lookup[ static_cast<size_t>(_base64Table[i]) ] = i;
     }
 
     const char* cur = input.c_str();
     const char* end = cur + input.size();
 
     const int BYTES_PER_PASS = 4;
-    const int BITS_PER_UNIT = 6;
 
     std::string output;
 
@@ -112,10 +111,10 @@ std::string decode(const std::string& input) {
     //
     // Pad values map to 0 which will automatically be ignored
     while((cur + BYTES_PER_PASS) <= end) {
-        unsigned char u0 = lookup[*cur];
-        unsigned char u1 = lookup[*(cur + 1)];
-        unsigned char u2 = lookup[*(cur + 2)];
-        unsigned char u3 = lookup[*(cur + 3)];
+        unsigned char u0 = lookup[ static_cast<size_t>(*cur) ];
+        unsigned char u1 = lookup[ static_cast<size_t>(*(cur + 1)) ];
+        unsigned char u2 = lookup[ static_cast<size_t>(*(cur + 2)) ];
+        unsigned char u3 = lookup[ static_cast<size_t>(*(cur + 3)) ];
 
         // All 6 bits of u0 or'd with top 2 bits of u1
         char byte0 = (u0 << 2) | (u1 >> 4);
@@ -144,8 +143,8 @@ std::string encode(const std::string& input) {
     std::string result;
     for(size_t i = 0; i < input.size(); ++i) {
         char byte = input[i]; 
-        result += lookup[((byte & 0xF0) >> 4)];
-        result += lookup[byte & 0xF];
+        result += lookup[ static_cast<size_t>(((byte & 0xF0) >> 4)) ];
+        result += lookup[ static_cast<size_t>(byte & 0xF) ];
     }
 
     return result;
@@ -155,18 +154,31 @@ std::string decode(const std::string& input) {
     const char* lookup = "0123456789abcdef";
     char hex2dec[256] = {0};
     for(size_t i = 0; i < 16; ++i) {
-        hex2dec[lookup[i]] = i;
+        hex2dec[static_cast<size_t>(lookup[i])] = i;
     }
 
     std::string result;
     char byte = 0;
     for(size_t i = 0; (i + 2) <= input.size(); i+=2) {
-        byte = hex2dec[input[i]] << 4;
-        byte = byte | hex2dec[input[i+1]];
+        byte = hex2dec[ static_cast<size_t>(input[i]) ] << 4;
+        byte = byte | hex2dec[ static_cast<size_t>(input[i+1]) ];
         result += byte;
     }
 
     return result;
 }
 } // namespace hex
+
+namespace cipher {
+    std::string fixed_xor(const std::string& buf1, const std::string& buf2) {
+        std::string result;
+        if (buf1.size() == buf2.size()) {
+            result.reserve(buf1.size());
+            for(size_t i = 0; i < buf1.size(); ++i) {
+                result += buf1[i] ^ buf2[i];
+            }
+        }
+        return result;
+    }
+} // namespace cipher
 
