@@ -215,6 +215,9 @@ bool alpha_numeric(const std::string& bytes) {
 }
 
 bool punctuation(unsigned char byte) {
+    if (byte >= '\t' && byte <= '\n')
+        return true;
+
     if (byte >= ' ' && byte <= '/')
         return true;
 
@@ -259,7 +262,7 @@ bool printable(const std::string& bytes) {
 
 float frequency_score(const std::string& bytes) {
     float scores[256] = {0};
-    float UPPERCASE_SCALE = 0.5f;
+    const float UPPERCASE_SCALE = 0.1f;
     scores['a'] = 8.167f; scores['A'] = scores['a'] * UPPERCASE_SCALE;
     scores['b'] = 1.492f; scores['B'] = scores['b'] * UPPERCASE_SCALE;
     scores['c'] = 2.782f; scores['C'] = scores['c'] * UPPERCASE_SCALE;
@@ -289,8 +292,8 @@ float frequency_score(const std::string& bytes) {
 
     float result = 0.0f;
     for(unsigned char b : bytes) {
-        //if (!printable(b))
-            //return 0;
+        if (!printable(b))
+            return 0;
 
         result += scores[b];
     }
