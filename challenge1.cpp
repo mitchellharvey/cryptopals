@@ -3,10 +3,10 @@
 #include <iostream>
 
 int main(int argc, char** argv) {
-    if (argc > 1) {
-        std::string bytes = hex::decode(argv[1]);
-        std::cout << "Output: " << base64::encode(bytes) << std::endl;
-    }
+    std::string input = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+    
+    std::cout << "Hex decode then Base64 encode: " << input << std::endl;
+    std::cout << "Output: " << base64::encode(hex::decode(input)) << std::endl;
 
     return 0;
 }
