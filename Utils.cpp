@@ -13,6 +13,10 @@ namespace {
         // 62 - 63
         '+', '/',
     };
+
+    inline size_t IDX(char b) {
+        return static_cast<size_t>(b);
+    }
 }
 
 namespace base64 {
@@ -279,32 +283,32 @@ bool printable(const std::string& bytes) {
 float frequency_score(const std::string& bytes) {
     float scores[255] = {0};
     const float UPPERCASE_SCALE = 0.1f;
-    scores['a'] = 8.167f; scores['A'] = scores['a'] * UPPERCASE_SCALE;
-    scores['b'] = 1.492f; scores['B'] = scores['b'] * UPPERCASE_SCALE;
-    scores['c'] = 2.782f; scores['C'] = scores['c'] * UPPERCASE_SCALE;
-    scores['d'] = 4.253f; scores['D'] = scores['d'] * UPPERCASE_SCALE;
-    scores['e'] = 12.702f; scores['E'] = scores['e'] * UPPERCASE_SCALE;
-    scores['f'] = 2.228f; scores['F'] = scores['f'] * UPPERCASE_SCALE;
-    scores['g'] = 2.015f; scores['G'] = scores['g'] * UPPERCASE_SCALE;
-    scores['h'] = 6.094f; scores['H'] = scores['h'] * UPPERCASE_SCALE;
-    scores['i'] = 6.966f; scores['I'] = scores['i'] * UPPERCASE_SCALE;
-    scores['j'] = 0.153f; scores['J'] = scores['j'] * UPPERCASE_SCALE;
-    scores['k'] = 0.772f; scores['K'] = scores['k'] * UPPERCASE_SCALE;
-    scores['l'] = 4.025f; scores['L'] = scores['l'] * UPPERCASE_SCALE;
-    scores['m'] = 2.406f; scores['M'] = scores['m'] * UPPERCASE_SCALE;
-    scores['n'] = 6.749f; scores['N'] = scores['n'] * UPPERCASE_SCALE;
-    scores['o'] = 7.507f; scores['O'] = scores['o'] * UPPERCASE_SCALE;
-    scores['p'] = 1.929f; scores['P'] = scores['p'] * UPPERCASE_SCALE;
-    scores['q'] = 0.095f; scores['Q'] = scores['q'] * UPPERCASE_SCALE;
-    scores['r'] = 5.987f; scores['R'] = scores['r'] * UPPERCASE_SCALE;
-    scores['s'] = 6.327f; scores['S'] = scores['s'] * UPPERCASE_SCALE;
-    scores['t'] = 9.056f; scores['T'] = scores['t'] * UPPERCASE_SCALE;
-    scores['u'] = 2.758f; scores['U'] = scores['u'] * UPPERCASE_SCALE;
-    scores['v'] = 0.978f; scores['V'] = scores['v'] * UPPERCASE_SCALE;
-    scores['w'] = 2.361f; scores['W'] = scores['w'] * UPPERCASE_SCALE;
-    scores['x'] = 0.150f; scores['X'] = scores['x'] * UPPERCASE_SCALE;
-    scores['y'] = 1.974f; scores['Y'] = scores['y'] * UPPERCASE_SCALE;
-    scores['z'] = 0.074f; scores['Z'] = scores['z'] * UPPERCASE_SCALE;
+    scores[IDX('a')] = 8.167f; scores[IDX('A')] = scores[IDX('a')] * UPPERCASE_SCALE;
+    scores[IDX('b')] = 1.492f; scores[IDX('B')] = scores[IDX('b')] * UPPERCASE_SCALE;
+    scores[IDX('c')] = 2.782f; scores[IDX('C')] = scores[IDX('c')] * UPPERCASE_SCALE;
+    scores[IDX('d')] = 4.253f; scores[IDX('D')] = scores[IDX('d')] * UPPERCASE_SCALE;
+    scores[IDX('e')] = 12.702f; scores[IDX('E')] = scores[IDX('e')] * UPPERCASE_SCALE;
+    scores[IDX('f')] = 2.228f; scores[IDX('F')] = scores[IDX('f')] * UPPERCASE_SCALE;
+    scores[IDX('g')] = 2.015f; scores[IDX('G')] = scores[IDX('g')] * UPPERCASE_SCALE;
+    scores[IDX('h')] = 6.094f; scores[IDX('H')] = scores[IDX('h')] * UPPERCASE_SCALE;
+    scores[IDX('i')] = 6.966f; scores[IDX('I')] = scores[IDX('i')] * UPPERCASE_SCALE;
+    scores[IDX('j')] = 0.153f; scores[IDX('J')] = scores[IDX('j')] * UPPERCASE_SCALE;
+    scores[IDX('k')] = 0.772f; scores[IDX('K')] = scores[IDX('k')] * UPPERCASE_SCALE;
+    scores[IDX('l')] = 4.025f; scores[IDX('L')] = scores[IDX('l')] * UPPERCASE_SCALE;
+    scores[IDX('m')] = 2.406f; scores[IDX('M')] = scores[IDX('m')] * UPPERCASE_SCALE;
+    scores[IDX('n')] = 6.749f; scores[IDX('N')] = scores[IDX('n')] * UPPERCASE_SCALE;
+    scores[IDX('o')] = 7.507f; scores[IDX('O')] = scores[IDX('o')] * UPPERCASE_SCALE;
+    scores[IDX('p')] = 1.929f; scores[IDX('P')] = scores[IDX('p')] * UPPERCASE_SCALE;
+    scores[IDX('q')] = 0.095f; scores[IDX('Q')] = scores[IDX('q')] * UPPERCASE_SCALE;
+    scores[IDX('r')] = 5.987f; scores[IDX('R')] = scores[IDX('r')] * UPPERCASE_SCALE;
+    scores[IDX('s')] = 6.327f; scores[IDX('S')] = scores[IDX('s')] * UPPERCASE_SCALE;
+    scores[IDX('t')] = 9.056f; scores[IDX('T')] = scores[IDX('t')] * UPPERCASE_SCALE;
+    scores[IDX('u')] = 2.758f; scores[IDX('U')] = scores[IDX('u')] * UPPERCASE_SCALE;
+    scores[IDX('v')] = 0.978f; scores[IDX('V')] = scores[IDX('v')] * UPPERCASE_SCALE;
+    scores[IDX('w')] = 2.361f; scores[IDX('W')] = scores[IDX('w')] * UPPERCASE_SCALE;
+    scores[IDX('x')] = 0.150f; scores[IDX('X')] = scores[IDX('x')] * UPPERCASE_SCALE;
+    scores[IDX('y')] = 1.974f; scores[IDX('Y')] = scores[IDX('y')] * UPPERCASE_SCALE;
+    scores[IDX('z')] = 0.074f; scores[IDX('Z')] = scores[IDX('z')] * UPPERCASE_SCALE;
 
     float result = 0.0f;
     for(unsigned char b : bytes) {
