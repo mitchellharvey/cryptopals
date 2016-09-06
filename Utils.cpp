@@ -208,6 +208,15 @@ std::string byte_xor(const std::string& bytes, unsigned char byte) {
     }
     return result;
 }
+
+std::string repeating_xor(const std::string& bytes, const std::string& key) {
+    std::string result(bytes.size(), 0);
+    for(size_t i = 0; i < bytes.size(); ++i) {
+        result[i] = bytes[i] ^ key[i % key.size()];
+    }
+
+    return result;
+}
 } // namespace cipher
 
 namespace ascii {
