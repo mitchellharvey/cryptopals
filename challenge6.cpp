@@ -5,22 +5,6 @@
 #include <vector>
 #include <algorithm>
 
-unsigned char guess_xor_byte(const std::string& bytes) {
-    float best = 0.0f;
-    unsigned char encode_byte = 0;
-
-    for(unsigned char i = 0; i < 255; ++i) {
-        std::string decoded = cipher::byte_xor(bytes, i);
-        float score = ascii::frequency_score(decoded);
-        if (score > best) {
-            best = score;
-            encode_byte = i;
-        }
-    }
-
-    return encode_byte;
-}
-
 int main(int argc, char** argv) {
 
     if (argc < 2) {
@@ -52,9 +36,17 @@ int main(int argc, char** argv) {
     using KEY_SIZE = std::pair<size_t, double>;
     std::vector<KEY_SIZE> sorted_key_sizes;
     for(size_t key_size = min_key_size; key_size <= max_key_size; ++key_size) {
-        std::string block1(bytes.c_str(), std::min(key_size, bytes.size()));
-        std::string block2(bytes.c_str() + key_size, std::min(key_size, bytes.size() - key_size));
-        double normalized_distance = (static_cast<double>(cipher::edit_distance(block1, block2)) / key_size);
+
+        size_t total_blocks = bytes.size() / key_size;
+        double normalized_distance = 0.0f;
+        for(size_t b = 0; b < total_blocks; b+=2) {
+            const char* b1_start = bytes.c_str() + (b * key_size);
+            const char* b2_start = bytes.c_str() + (b+1 * key_size);
+            std::string block1(b1_start, std::min(key_size, bytes.size()));
+            std::string block2(b2_start, std::min(key_size, bytes.size() - key_size));
+            normalized_distance += (static_cast<double>(cipher::hamming_distance(block1, block2)) / key_size);
+        }
+        normalized_distance /= total_blocks;
         sorted_key_sizes.push_back(KEY_SIZE(key_size, normalized_distance));
     }
 
@@ -83,17 +75,16 @@ int main(int argc, char** argv) {
         // Now we have our blocks, guess the single xor char for each block
         std::string repeating_xor_key;
         for(auto block : blocks) {
-            repeating_xor_key += guess_xor_byte(block);
+            repeating_xor_key += cipher::guess_xor_byte(block);
         }
 
         std::cout << "Key Size: " << cur_key_size << std::endl;
         std::cout << "Score: " << key_size.second << std::endl;
         std::cout << "Key: " << hex::encode(repeating_xor_key) << std::endl;
-        if (cur_key_size == 29) {
-            std::cout << "Result: " << cipher::repeating_xor(blocks[0], repeating_xor_key) << std::endl;
-        }
 
+        std::cout << cipher::repeating_xor(bytes, repeating_xor_key) << std::endl;
 
+        break;
     }
 
     return 0;

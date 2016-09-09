@@ -220,7 +220,7 @@ std::string repeating_xor(const std::string& bytes, const std::string& key) {
     return result;
 }
 
-size_t edit_distance(const std::string& bytes1, const std::string& bytes2) {
+size_t hamming_distance(const std::string& bytes1, const std::string& bytes2) {
     size_t result = 0;
     size_t i = 0;
     for(; i < bytes1.size() && i < bytes2.size(); i++) {
@@ -238,6 +238,24 @@ size_t edit_distance(const std::string& bytes1, const std::string& bytes2) {
     }
 
     return result;
+}
+
+unsigned char guess_xor_byte(const std::string& bytes, float* out_score) {
+    unsigned char encode_byte = 0;
+    float best = 0;
+    for(unsigned char i = 0; i < 255; ++i) {
+        std::string decoded = cipher::byte_xor(bytes, i);
+        float score = ascii::frequency_score(decoded);
+        if (score > best) {
+            best = score;
+            encode_byte = i;
+        }
+    }
+
+    if (out_score)
+        *out_score = best;
+
+    return encode_byte;
 }
 } // namespace cipher
 
@@ -313,7 +331,7 @@ bool printable(const std::string& bytes) {
 
 float frequency_score(const std::string& bytes) {
     float scores[255] = {0};
-    const float UPPERCASE_SCALE = 0.1f;
+    const float UPPERCASE_SCALE = 0.9f;
     scores[IDX('a')] = 8.167f; scores[IDX('A')] = scores[IDX('a')] * UPPERCASE_SCALE;
     scores[IDX('b')] = 1.492f; scores[IDX('B')] = scores[IDX('b')] * UPPERCASE_SCALE;
     scores[IDX('c')] = 2.782f; scores[IDX('C')] = scores[IDX('c')] * UPPERCASE_SCALE;
@@ -341,12 +359,17 @@ float frequency_score(const std::string& bytes) {
     scores[IDX('y')] = 1.974f; scores[IDX('Y')] = scores[IDX('y')] * UPPERCASE_SCALE;
     scores[IDX('z')] = 0.074f; scores[IDX('Z')] = scores[IDX('z')] * UPPERCASE_SCALE;
 
+    scores[IDX(' ')] = 13.0f;
+    scores[IDX('\n')] = 6.0f;
+    scores[IDX('\'')] = 7.0f;
+    scores[IDX('\"')] = 7.0f;
+
     float result = 0.0f;
     for(unsigned char b : bytes) {
         if (!printable(b))
-            return 0;
-
-        result += scores[b];
+            result -= 10.0f;
+        else
+            result += scores[b];
     }
 
     return result;

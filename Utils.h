@@ -21,7 +21,8 @@ namespace cipher {
     std::string fixed_xor(const std::string& bytes1, const std::string& bytes2);
     std::string byte_xor(const std::string& bytes, unsigned char byte);
     std::string repeating_xor(const std::string& bytes, const std::string& key);
-    size_t edit_distance(const std::string& bytes1, const std::string& bytes2);
+    size_t hamming_distance(const std::string& bytes1, const std::string& bytes2);
+    unsigned char guess_xor_byte(const std::string& bytes, float* out_score = nullptr);
 }
 
 namespace ascii {
