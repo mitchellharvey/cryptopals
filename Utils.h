@@ -1,4 +1,5 @@
 #pragma once
+#include <openssl/evp.h>
 #include <string>
 
 namespace base64 {
@@ -23,6 +24,12 @@ namespace cipher {
     std::string repeating_xor(const std::string& bytes, const std::string& key);
     size_t hamming_distance(const std::string& bytes1, const std::string& bytes2);
     unsigned char guess_xor_byte(const std::string& bytes, float* out_score = nullptr);
+}
+
+namespace openssl {
+    void init();
+    void cleanup();
+    std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode);
 }
 
 namespace ascii {

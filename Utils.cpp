@@ -1,5 +1,7 @@
 #include "Utils.h"
 
+#include <openssl/err.h>
+#include <openssl/conf.h>
 #include <bitset>
 
 namespace {
@@ -375,3 +377,44 @@ float frequency_score(const std::string& bytes) {
     return result;
 }
 } //namespace ascii
+
+namespace openssl {
+void init() {
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+    OPENSSL_config(nullptr);
+}
+
+void cleanup() {
+    EVP_cleanup();
+    ERR_free_strings();
+}
+
+std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode) {
+    std::string result;
+
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (ctx) {
+        if (1 == EVP_DecryptInit_ex(ctx, mode, nullptr, reinterpret_cast<const unsigned char*>(key.c_str()), nullptr)) {
+            int decrypted_size = 0;
+            unsigned char* buffer = new unsigned char[bytes.size()];
+            const unsigned char* byte_ptr = reinterpret_cast<const unsigned char*>(bytes.c_str());
+            
+            int len = 0;
+            EVP_DecryptUpdate(ctx, buffer, &len, byte_ptr, bytes.size());
+            decrypted_size += len;
+            EVP_DecryptFinal_ex(ctx, buffer + len, &len);
+            decrypted_size += len;
+
+            result = std::string(reinterpret_cast<char*>(buffer), decrypted_size);
+
+            delete [] buffer;
+        }
+
+        EVP_CIPHER_CTX_free(ctx);
+    }
+
+    return result;
+}
+} //namespace openssl
+
