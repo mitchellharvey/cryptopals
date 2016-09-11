@@ -259,6 +259,15 @@ unsigned char guess_xor_byte(const std::string& bytes, float* out_score) {
 
     return encode_byte;
 }
+
+std::string& pad_pkcs7(std::string& bytes, unsigned char block_size) {
+
+    if (!block_size || block_size == bytes.size())
+        return bytes;
+
+    unsigned char pad_bytes = block_size - (bytes.size() % block_size);
+    return bytes.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
+}
 } // namespace cipher
 
 namespace ascii {

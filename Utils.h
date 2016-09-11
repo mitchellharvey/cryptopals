@@ -24,6 +24,7 @@ namespace cipher {
     std::string repeating_xor(const std::string& bytes, const std::string& key);
     size_t hamming_distance(const std::string& bytes1, const std::string& bytes2);
     unsigned char guess_xor_byte(const std::string& bytes, float* out_score = nullptr);
+    std::string& pad_pkcs7(std::string& bytes, unsigned char block_size);
 }
 
 namespace openssl {

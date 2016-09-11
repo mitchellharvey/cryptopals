@@ -59,8 +59,8 @@ int main(int argc, char** argv) {
             }
         );
 
-    std::cout << "Most likley block: " << std::endl << hex::encode(bytes[scores[0].first]) << std::endl;
-    std::cout << "Repeating blocks: " << scores[0].second << std::endl;
+    std::cout << "Most likley AES 128bit ECB Encrypted Bytes: " << std::endl << hex::encode(bytes[scores[0].first]) << std::endl;
+    std::cout << "Repeating 128bit blocks: " << scores[0].second << std::endl;
     std::cout << "Index: " << scores[0].first << std::endl;
 
     return 0;
