@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
 
     if (argc < 2) {
-        std::cout << "Please specify the challenege6 file!" << std::endl;
+        std::cout << "Please specify the challenege8 file!" << std::endl;
         return 1;
     }
 
@@ -18,8 +18,6 @@ int main(int argc, char** argv) {
         return 2;
     }
 
-    // Load each line, base64 decode it and append it to the list of
-    // bytes to operate on
     std::vector<std::string> bytes;
     for(std::string line; std::getline(ifile, line); ) {
         bytes.push_back(hex::decode(line));

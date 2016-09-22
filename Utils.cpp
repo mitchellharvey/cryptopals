@@ -3,6 +3,7 @@
 #include <openssl/err.h>
 #include <openssl/conf.h>
 #include <bitset>
+#include <cstring>
 
 namespace {
     const char _base64Table[] = {
@@ -262,10 +263,30 @@ unsigned char guess_xor_byte(const std::string& bytes, float* out_score) {
 
 std::string pad_pkcs7(const std::string& bytes, unsigned char block_size) {
     std::string result = bytes;
-    if (block_size && block_size != bytes.size()) {
-        unsigned char pad_bytes = block_size - (bytes.size() % block_size);
-        result.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
+    if (block_size && (bytes.size() % block_size)) {
+        int diff = (bytes.size() % block_size);
+        if (diff) {
+            unsigned char pad_bytes = block_size - diff;
+            result.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
+        }
     }
+    return result;
+}
+
+std::string unpad_pkcs7(const std::string& bytes, unsigned char block_size) {
+    std::string result = bytes;
+    if (bytes.size()) {
+        unsigned char pad_byte = bytes[bytes.size() - 1];
+        if (pad_byte < bytes.size()) {
+            unsigned char* expected_pad = new unsigned char[pad_byte];
+            memset(expected_pad, pad_byte, pad_byte);
+            const char *padding_start = bytes.c_str() + (bytes.size() - pad_byte);
+            if (memcmp(padding_start, expected_pad, pad_byte) == 0) {
+                result = bytes.substr(0, bytes.size() - pad_byte);
+            }
+        }
+    }
+
     return result;
 }
 } // namespace cipher
@@ -399,12 +420,16 @@ void cleanup() {
     ERR_free_strings();
 }
 
-std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode) {
+std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode, int padding) {
     std::string result;
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (ctx) {
         if (1 == EVP_DecryptInit_ex(ctx, mode, nullptr, reinterpret_cast<const unsigned char*>(key.c_str()), nullptr)) {
+
+            if (padding >= 0)
+                EVP_CIPHER_CTX_set_padding(ctx, padding);
+
             int decrypted_size = 0;
             unsigned char* buffer = new unsigned char[bytes.size()];
             const unsigned char* byte_ptr = reinterpret_cast<const unsigned char*>(bytes.c_str());
@@ -426,12 +451,16 @@ std::string decrypt(const std::string& bytes, const std::string& key, const EVP_
     return result;
 }
 
-std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode) {
+std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode, int padding) {
     std::string result;
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (ctx) {
         if (1 == EVP_EncryptInit_ex(ctx, mode, nullptr, reinterpret_cast<const unsigned char*>(key.c_str()), nullptr)) {
+
+            if (padding >= 0)
+                EVP_CIPHER_CTX_set_padding(ctx, padding);
+
             int encrypted_size = 0;
             int cipher_block_size = EVP_CIPHER_block_size(mode);
             unsigned char* buffer = new unsigned char[bytes.size() + cipher_block_size];
@@ -452,6 +481,39 @@ std::string encrypt(const std::string& bytes, const std::string& key, const EVP_
     }
 
     return result;
+}
+
+std::string cbc_encrypt(const std::string& bytes, const std::string& key, const std::string& iv) {
+    // Implement CBC encryption manually, xor input block with last encrypted block
+    // then encrypt that.  First block is xor'd with the iv
+    std::string result;
+    std::string last_xor = iv;
+    
+    const size_t BLOCK_SIZE = 16;
+    std::string padded = cipher::pad_pkcs7(bytes, BLOCK_SIZE);
+    for(size_t i = 0; i < padded.size(); i += BLOCK_SIZE) {
+        std::string block(&padded[i], BLOCK_SIZE);
+        last_xor = openssl::encrypt(cipher::repeating_xor(block, last_xor), key, EVP_aes_128_ecb(), 0);
+        result += last_xor;
+    }
+
+    return result;
+}
+
+std::string cbc_decrypt(const std::string& bytes, const std::string& key, const std::string& iv) {
+
+    std::string result;
+    std::string last_xor = iv;
+
+    const size_t BLOCK_SIZE = 16;
+    for(size_t i = 0; i < bytes.size(); i += BLOCK_SIZE) {
+        std::string encrypted(bytes.c_str() + i, BLOCK_SIZE);
+        std::string decrypted = openssl::decrypt(encrypted, key, EVP_aes_128_ecb(), 0);
+        result += cipher::repeating_xor(decrypted, last_xor);
+        last_xor = encrypted;
+    }
+
+    return cipher::unpad_pkcs7(result, BLOCK_SIZE);
 }
 } //namespace openssl
 

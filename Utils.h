@@ -25,13 +25,16 @@ namespace cipher {
     size_t hamming_distance(const std::string& bytes1, const std::string& bytes2);
     unsigned char guess_xor_byte(const std::string& bytes, float* out_score = nullptr);
     std::string pad_pkcs7(const std::string& bytes, unsigned char block_size);
+    std::string unpad_pkcs7(const std::string& bytes, unsigned char block_size);
 }
 
 namespace openssl {
     void init();
     void cleanup();
-    std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode);
-    std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode);
+    std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode, int padding = -1);
+    std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode, int padding = -1);
+    std::string cbc_encrypt(const std::string& bytes, const std::string& key, const std::string& iv);
+    std::string cbc_decrypt(const std::string& bytes, const std::string& key, const std::string& iv);
 }
 
 namespace ascii {
