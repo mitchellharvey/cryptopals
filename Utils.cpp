@@ -213,10 +213,10 @@ std::string byte_xor(const std::string& bytes, unsigned char byte) {
     return result;
 }
 
-std::string repeating_xor(const std::string& bytes, const std::string& key) {
+std::string repeating_xor(const std::string& bytes, const std::string& repeat) {
     std::string result(bytes.size(), 0);
     for(size_t i = 0; i < bytes.size(); ++i) {
-        result[i] = bytes[i] ^ key[i % key.size()];
+        result[i] = bytes[i] ^ repeat[i % repeat.size()];
     }
 
     return result;
@@ -260,13 +260,13 @@ unsigned char guess_xor_byte(const std::string& bytes, float* out_score) {
     return encode_byte;
 }
 
-std::string& pad_pkcs7(std::string& bytes, unsigned char block_size) {
-
-    if (!block_size || block_size == bytes.size())
-        return bytes;
-
-    unsigned char pad_bytes = block_size - (bytes.size() % block_size);
-    return bytes.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
+std::string pad_pkcs7(const std::string& bytes, unsigned char block_size) {
+    std::string result = bytes;
+    if (block_size && block_size != bytes.size()) {
+        unsigned char pad_bytes = block_size - (bytes.size() % block_size);
+        result.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
+    }
+    return result;
 }
 } // namespace cipher
 
@@ -416,6 +416,34 @@ std::string decrypt(const std::string& bytes, const std::string& key, const EVP_
             decrypted_size += len;
 
             result = std::string(reinterpret_cast<char*>(buffer), decrypted_size);
+
+            delete [] buffer;
+        }
+
+        EVP_CIPHER_CTX_free(ctx);
+    }
+
+    return result;
+}
+
+std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode) {
+    std::string result;
+
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (ctx) {
+        if (1 == EVP_EncryptInit_ex(ctx, mode, nullptr, reinterpret_cast<const unsigned char*>(key.c_str()), nullptr)) {
+            int encrypted_size = 0;
+            int cipher_block_size = EVP_CIPHER_block_size(mode);
+            unsigned char* buffer = new unsigned char[bytes.size() + cipher_block_size];
+            const unsigned char* byte_ptr = reinterpret_cast<const unsigned char*>(bytes.c_str());
+            
+            int len = 0;
+            EVP_EncryptUpdate(ctx, buffer, &len, byte_ptr, bytes.size());
+            encrypted_size += len;
+            EVP_EncryptFinal_ex(ctx, buffer + len, &len);
+            encrypted_size += len;
+
+            result = std::string(reinterpret_cast<char*>(buffer), encrypted_size);
 
             delete [] buffer;
         }

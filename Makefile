@@ -22,6 +22,7 @@ CHALLENGE6_SRCS = 	./challenge6.cpp
 CHALLENGE7_SRCS = 	./challenge7.cpp
 CHALLENGE8_SRCS = 	./challenge8.cpp
 CHALLENGE9_SRCS = 	./challenge9.cpp
+CHALLENGE10_SRCS = 	./challenge10.cpp
 
 # Binaries
 CHALLENGE1 = 'challenge1.out'
@@ -32,6 +33,7 @@ CHALLENGE5 = 'challenge5.out'
 CHALLENGE6 = 'challenge6.out'
 CHALLENGE8 = 'challenge8.out'
 CHALLENGE9 = 'challenge9.out'
+CHALLENGE10 = 'challenge10.out'
 
 #
 # The following part of the makefile is generic; it can be used to 
@@ -49,11 +51,12 @@ CHALLENGE6_OBJS = $(CHALLENGE6_SRCS:.cpp=.o)
 CHALLENGE7_OBJS = $(CHALLENGE7_SRCS:.cpp=.o)
 CHALLENGE8_OBJS = $(CHALLENGE8_SRCS:.cpp=.o)
 CHALLENGE9_OBJS = $(CHALLENGE9_SRCS:.cpp=.o)
+CHALLENGE10_OBJS = $(CHALLENGE10_SRCS:.cpp=.o)
 
 .PHONY: depend clean
 
 all: $(CHALLENGE1) $(CHALLENGE2) $(CHALLENGE3) $(CHALLENGE4) $(CHALLENGE5) $(CHALLENGE6) $(CHALLENGE7) \
-	 $(CHALLENGE8) $(CHALLENGE9)
+	 $(CHALLENGE8) $(CHALLENGE9) $(CHALLENGE10)
 	@echo Build All
 
 $(CHALLENGE1): $(COMMON_OBJS) $(CHALLENGE1_OBJS)
@@ -82,6 +85,9 @@ $(CHALLENGE8): $(COMMON_OBJS) $(CHALLENGE8_OBJS)
 
 $(CHALLENGE9): $(COMMON_OBJS) $(CHALLENGE9_OBJS)
 	$(CXX) $(COMMON_OBJS) $(CHALLENGE9_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CHALLENGE9)
+
+$(CHALLENGE10): $(COMMON_OBJS) $(CHALLENGE10_OBJS)
+	$(CXX) $(COMMON_OBJS) $(CHALLENGE10_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CHALLENGE10)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of

@@ -21,16 +21,17 @@ namespace hex {
 namespace cipher {
     std::string fixed_xor(const std::string& bytes1, const std::string& bytes2);
     std::string byte_xor(const std::string& bytes, unsigned char byte);
-    std::string repeating_xor(const std::string& bytes, const std::string& key);
+    std::string repeating_xor(const std::string& bytes, const std::string& repeat);
     size_t hamming_distance(const std::string& bytes1, const std::string& bytes2);
     unsigned char guess_xor_byte(const std::string& bytes, float* out_score = nullptr);
-    std::string& pad_pkcs7(std::string& bytes, unsigned char block_size);
+    std::string pad_pkcs7(const std::string& bytes, unsigned char block_size);
 }
 
 namespace openssl {
     void init();
     void cleanup();
     std::string decrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode);
+    std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode);
 }
 
 namespace ascii {
