@@ -278,10 +278,9 @@ std::string unpad_pkcs7(const std::string& bytes, unsigned char block_size) {
     if (bytes.size()) {
         unsigned char pad_byte = bytes[bytes.size() - 1];
         if (pad_byte < bytes.size()) {
-            unsigned char* expected_pad = new unsigned char[pad_byte];
-            memset(expected_pad, pad_byte, pad_byte);
+            std::string expected_pad(static_cast<size_t>(pad_byte), static_cast<char>(pad_byte));
             const char *padding_start = bytes.c_str() + (bytes.size() - pad_byte);
-            if (memcmp(padding_start, expected_pad, pad_byte) == 0) {
+            if (memcmp(padding_start, expected_pad.c_str(), pad_byte) == 0) {
                 result = bytes.substr(0, bytes.size() - pad_byte);
             }
         }
