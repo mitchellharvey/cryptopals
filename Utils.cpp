@@ -263,12 +263,10 @@ unsigned char guess_xor_byte(const std::string& bytes, float* out_score) {
 
 std::string pad_pkcs7(const std::string& bytes, unsigned char block_size) {
     std::string result = bytes;
-    if (block_size && (bytes.size() % block_size)) {
+    if (block_size) {
         int diff = (bytes.size() % block_size);
-        if (diff) {
-            unsigned char pad_bytes = block_size - diff;
-            result.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
-        }
+        unsigned char pad_bytes = block_size - diff;
+        result.append(static_cast<size_t>(pad_bytes), static_cast<char>(pad_bytes));
     }
     return result;
 }

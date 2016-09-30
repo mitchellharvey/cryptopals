@@ -42,9 +42,9 @@ int main(int argc, char** argv) {
             size_t chunk_start = chunk * CHUNK_SIZE_BYTES;
             size_t search_offset = chunk_start + CHUNK_SIZE_BYTES;
             const std::string c = std::string(&cur_bytes[chunk_start], CHUNK_SIZE_BYTES);
-            while(cur_bytes.find(c, search_offset) != std::string::npos) {
+            while((search_offset = cur_bytes.find(c, search_offset)) != std::string::npos) {
                 bs.second++;
-                search_offset += CHUNK_SIZE_BYTES;
+                search_offset++;
             }
         }
 
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
         );
 
     std::cout << "Most likley AES 128bit ECB Encrypted Bytes: " << std::endl << hex::encode(bytes[scores[0].first]) << std::endl;
-    std::cout << "Repeating 128bit blocks: " << scores[0].second << std::endl;
+    std::cout << "Score: " << scores[0].second << std::endl;
     std::cout << "Index: " << scores[0].first << std::endl;
 
     return 0;
