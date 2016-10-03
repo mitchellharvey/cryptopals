@@ -35,6 +35,8 @@ namespace openssl {
     std::string encrypt(const std::string& bytes, const std::string& key, const EVP_CIPHER* mode, int padding = -1);
     std::string cbc_encrypt(const std::string& bytes, const std::string& key, const std::string& iv);
     std::string cbc_decrypt(const std::string& bytes, const std::string& key, const std::string& iv);
+    std::string random(size_t byte_count);
+    unsigned long random_number(int min, int max);
 }
 
 namespace ascii {
