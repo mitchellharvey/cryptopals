@@ -2,6 +2,8 @@
 
 #include <openssl/err.h>
 #include <openssl/conf.h>
+#include <openssl/rand.h>
+#include <openssl/bn.h>
 #include <bitset>
 #include <cstring>
 
@@ -512,5 +514,27 @@ std::string cbc_decrypt(const std::string& bytes, const std::string& key, const 
 
     return cipher::unpad_pkcs7(result, BLOCK_SIZE);
 }
-} //namespace openssl
+
+std::string random(size_t byte_count) {
+    std::string result;
+    unsigned char* buff = new unsigned char[byte_count];
+    if (RAND_bytes(buff, static_cast<int>(byte_count)) == 1) {
+        result = std::string(reinterpret_cast<char*>(buff), byte_count);
+    }
+    delete [] buff;
+    return result;
+}
+
+unsigned long random_number(int min, int max) {
+    BIGNUM* res = BN_new();
+    BIGNUM* range = BN_new();
+    BN_set_word(range, (max+1) - min);
+
+    unsigned long result = 0;
+    if (BN_rand_range(res, range) == 1) {
+        result = BN_get_word(res) + min;
+    }
+    return result;
+}
+}//namespace openssl
 
