@@ -47,11 +47,15 @@ int main(int argc, char** argv) {
     std::string enc = oracle(std::string('A', 100));
     std::cout << hex::encode(enc) << std::endl;
 
+    openssl::init();
+
     if (is_ecb(enc, 16)) {
         std::cout << "Detected ECB" << std::endl;
     } else {
         std::cout << "Detected CBC" << std::endl;
     }
+
+    openssl::cleanup();
 
     return 0;
 }
