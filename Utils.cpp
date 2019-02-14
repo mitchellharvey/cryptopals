@@ -225,22 +225,17 @@ std::string repeating_xor(const std::string& bytes, const std::string& repeat) {
     return result;
 }
 
-size_t hamming_distance(const std::string& bytes1, const std::string& bytes2) {
-    size_t result = 0;
+double hamming_distance(const std::string& bytes1, const std::string& bytes2) {
+    double result = 0;
     size_t i = 0;
     for(; i < bytes1.size() && i < bytes2.size(); i++) {
         std::bitset<8> bs(bytes1[i] ^ bytes2[i]);
-        result += bs.count();
+        result += static_cast<double>(bs.count());
     }
 
-    // Count the remaining set bits in the bytes of the larger string
-    const std::string* bigger = &bytes1;
-    if (bytes2.size() > bytes1.size())
-        bigger = &bytes2;
+    double maxResult = static_cast<double>(bytes1.size() * 8);
 
-    for( ; i < bigger->size(); ++i) {
-        result += std::bitset<8>((*bigger)[i]).count();
-    }
+    result = result / maxResult;
 
     return result;
 }

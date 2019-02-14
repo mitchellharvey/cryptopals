@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
             const char* b2_start = bytes.c_str() + (b+1 * key_size);
             std::string block1(b1_start, std::min(key_size, bytes.size()));
             std::string block2(b2_start, std::min(key_size, bytes.size() - key_size));
-            normalized_distance += (static_cast<double>(cipher::hamming_distance(block1, block2)) / key_size);
+            normalized_distance += cipher::hamming_distance(block1, block2);
         }
         normalized_distance /= total_blocks;
         sorted_key_sizes.push_back(KEY_SIZE(key_size, normalized_distance));
